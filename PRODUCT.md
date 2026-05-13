@@ -10,15 +10,31 @@ Ankahe is for people who want a calm way to explain how they work, relate, commu
 
 ## Product Purpose
 
-Ankahe is a privacy-first web application for creating personal and professional operating manuals. It helps users write structured answers, choose what is shared or kept private, and export the result as a link, QR code, image, or PDF. Success means the user can say important context once, preserve agency over what is visible, and leave with a useful artifact.
+Ankahe is a privacy-first web application for creating personal and professional operating manuals. It helps users write structured answers, choose what is included or kept private, and export the result as a link, QR code, image, or PDF.
+
+Success means the user can say important context once, preserve agency over what is visible, and leave with a useful artifact.
+
+## Brand Relationship
+
+Ankahe is a sibling brand to Reflections. Both share calm, human, privacy-first principles. Ankahe is distinct as a structured manual studio, not a journal, diary, sanctuary, mood tracker, insight dashboard, or therapy product.
+
+Primary brand docs live in `docs/brand/`.
 
 ## Brand Personality
 
-Warm, calm, human. The interface should feel like a premium private document studio rather than a clinical form builder or generic AI product.
+Warm, calm, human, careful, and practical. The interface should feel like a premium private document studio rather than a clinical form builder, generic AI product, or productivity dashboard.
+
+## Canonical Language
+
+Use these product terms consistently: manual, Me Manual, Work Manual, answer, visibility, included, private, omitted, artifact, memory only, save in link, share link, QR code, export, sample manual.
+
+Prefer "included" and "private" over "public" and "hidden" in user-facing copy.
 
 ## Anti-references
 
-Avoid clinical healthcare styling, manipulative coaching patterns, generic SaaS dashboards, purple-blue AI gradients, glassy panels, decorative metric cards, and interfaces that make privacy feel technical or intimidating.
+Avoid clinical healthcare styling, manipulative coaching patterns, generic SaaS dashboards, purple-blue AI gradients, glassy panels, decorative metric cards, gamified progress loops, and interfaces that make privacy feel technical or intimidating.
+
+Avoid copy that says or implies diagnosis, healing, scoring, optimization, magic, unlocking, or AI authority over the user's identity.
 
 ## Design Principles
 
@@ -27,6 +43,8 @@ Avoid clinical healthcare styling, manipulative coaching patterns, generic SaaS 
 - Writing should feel like composing a document, not filling a database.
 - Controls should use plain language and familiar affordances.
 - Calm visual craft matters because users are writing sensitive context.
+- Omitted information is a valid choice, not a failure state.
+- The finished manual is the outcome; AI assistance, when present, is secondary.
 
 ## Accessibility & Inclusion
 

@@ -106,7 +106,7 @@ function AppContent() {
           </Routes>
         </div>
       </main>
-      <SiteFooter onStart={handleStart} />
+      <SiteFooter />
     </div>
   );
 }
@@ -145,7 +145,7 @@ function ManualBuilder({
             <button
               onClick={() => setView('build')}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
                 view === 'build' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
@@ -155,7 +155,7 @@ function ManualBuilder({
             <button
               onClick={() => setView('artifact')}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
                 view === 'artifact' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
