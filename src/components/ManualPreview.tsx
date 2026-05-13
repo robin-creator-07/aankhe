@@ -22,14 +22,14 @@ export function ManualPreview({ manual, mode, className }: ManualPreviewProps) {
     <div className={cn("bg-ankahe-surface md:rounded-sm md:border md:border-ankahe-border p-8 md:p-14 lg:p-16 overflow-y-auto max-h-screen", className)}>
       <div className="max-w-3xl mx-auto space-y-16">
         {/* Header */}
-        <header className="space-y-6 border-b border-ankahe-border pb-12 text-center">
+        <div className="space-y-6 border-b border-ankahe-border pb-12 text-center">
           <p className="text-ankahe-accent font-bold uppercase tracking-[0.2em] text-[10px]">
             {manual.subtitle}
           </p>
           <h1 className={cn("text-4xl md:text-5xl lg:text-6xl font-display font-medium text-ankahe-accent-dark tracking-tight leading-none")}>
             {manual.title}
           </h1>
-        </header>
+        </div>
 
         {/* At a Glance */}
         {manual.atAGlance && (
@@ -73,11 +73,11 @@ export function ManualPreview({ manual, mode, className }: ManualPreviewProps) {
           </div>
         )}
 
-        <footer className="pt-16 pb-8 border-t border-ankahe-border text-center">
+        <div className="pt-16 pb-8 border-t border-ankahe-border text-center">
           <p className="text-[10px] text-ankahe-muted/70 uppercase tracking-[0.2em] font-medium">
             Made with Ankahe · No account · No database
           </p>
-        </footer>
+        </div>
       </div>
     </div>
   );

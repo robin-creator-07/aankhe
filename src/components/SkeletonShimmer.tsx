@@ -7,7 +7,7 @@ import { cn } from "../lib/utils";
 
 export function SkeletonShimmer({ className }: { className?: string }) {
   return (
-    <div className={cn("animate-pulse bg-slate-200 rounded-md", className)} />
+    <div className={cn("animate-pulse bg-ankahe-border rounded-md", className)} />
   );
 }
 

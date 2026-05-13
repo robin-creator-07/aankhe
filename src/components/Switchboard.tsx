@@ -88,10 +88,9 @@ export function Switchboard({ onStart, onTrySample, storageMode, onStorageModeCh
 
 function ModeCard({ title, label, description, onClick, onSampleClick }: any) {
   return (
-    <motion.div 
+    <motion.article 
       whileHover={{ y: -2 }}
-      className="bg-ankahe-surface border border-ankahe-border p-8 rounded-lg cursor-pointer transition-all hover:shadow-sm"
-      onClick={onClick}
+      className="bg-ankahe-surface border border-ankahe-border p-8 rounded-lg transition-all hover:shadow-sm"
     >
       <div className="space-y-3 mb-8">
         <h2 className="text-3xl font-display font-medium text-ankahe-text">{title}</h2>
@@ -99,14 +98,14 @@ function ModeCard({ title, label, description, onClick, onSampleClick }: any) {
         <p className="text-ankahe-muted leading-relaxed">{description}</p>
       </div>
       <div className="flex items-center gap-4">
-        <SoftButton size="md" className="rounded-md">Start a manual</SoftButton>
+        <SoftButton size="md" className="rounded-md" onClick={onClick}>Start a manual</SoftButton>
         <button 
-          onClick={(e) => { e.stopPropagation(); onSampleClick(); }}
-          className="text-sm font-medium text-ankahe-muted hover:text-ankahe-text transition-colors underline underline-offset-4"
+          onClick={onSampleClick}
+          className="min-h-11 inline-flex items-center text-sm font-medium text-ankahe-muted hover:text-ankahe-text transition-colors underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
         >
           See a sample
         </button>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }

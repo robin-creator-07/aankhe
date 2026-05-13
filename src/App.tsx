@@ -3,24 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import { Switchboard } from './components/Switchboard';
 import { StorageMode, ModeId } from './lib/schemaTypes';
 import { useManualState } from './hooks/useManualState';
 import { FormRenderer } from './components/FormRenderer';
-import { ArtifactStudio } from './components/ArtifactStudio';
 import { AnimatePresence, motion } from 'motion/react';
 import { SoftButton } from './components/SoftButton';
 import { PROTOCOL_MANIFEST } from './lib/protocolManifest';
-import { THEME_ENGINE } from './lib/themeEngine';
 import { ManualPreview } from './components/ManualPreview';
 import { composeManual } from './lib/manualComposer';
 import { PrivacyMeter } from './components/PrivacyMeter';
 import { cn } from './lib/utils';
-import { ChevronLeft, LayoutDashboard, Sparkles, User, Briefcase, FileText } from 'lucide-react';
+import { ChevronLeft, Sparkles, FileText } from 'lucide-react';
 import { SiteHeader } from './components/SiteHeader';
 import { SiteFooter } from './components/SiteFooter';
+import { ManualSkeleton } from './components/SkeletonShimmer';
+
+const ArtifactStudio = lazy(() =>
+  import('./components/ArtifactStudio').then((module) => ({ default: module.ArtifactStudio }))
+);
 
 function AppContent() {
   const { 
@@ -100,7 +103,6 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
   const config = PROTOCOL_MANIFEST[mode || 'me'];
   const [view, setView] = useState<'build' | 'artifact'>('build');
   const composed = useMemo(() => composeManual(state), [state]);
-  const theme = THEME_ENGINE[state.mode];
 
   if (!mode || (mode !== 'me' && mode !== 'work')) {
     return <Navigate to="/" />;
@@ -109,21 +111,23 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
   return (
     <div className="w-full font-sans transition-colors duration-700 bg-ankahe-bg text-ankahe-text relative">
       {/* Top Nav */}
-      <nav className="sticky top-16 z-40 bg-ankahe-bg/80 backdrop-blur-md border-b border-ankahe-border/50">
+      <nav aria-label="Manual builder" className="sticky top-16 z-40 bg-ankahe-bg/80 backdrop-blur-md border-b border-ankahe-border/50">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <button 
             onClick={onBack}
-            className="flex items-center gap-2 text-ankahe-muted hover:text-ankahe-text transition-colors font-medium text-sm"
+            className="min-h-11 min-w-11 flex items-center justify-center gap-2 text-ankahe-muted hover:text-ankahe-text transition-colors font-medium text-sm"
+            aria-label="Back to Hub"
           >
             <ChevronLeft size={18} />
             <span className="hidden md:inline">Back to Hub</span>
           </button>
 
-          <div className="flex bg-ankahe-border/30 p-1 rounded-sm">
+          <div className="flex bg-ankahe-border/30 p-1 rounded-sm" aria-label="Manual view selector">
             <button
               onClick={() => setView('build')}
+              aria-pressed={view === 'build'}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
                 view === 'build' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
@@ -132,8 +136,9 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
             </button>
             <button
               onClick={() => setView('artifact')}
+              aria-pressed={view === 'artifact'}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
                 view === 'artifact' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
@@ -148,7 +153,7 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <AnimatePresence mode="wait">
           {view === 'build' ? (
             <motion.div 
@@ -185,15 +190,17 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <ArtifactStudio 
-                state={state}
-                url={window.location.href} 
-                storageMode={state.storageMode} 
-              />
+              <Suspense fallback={<ManualSkeleton />}>
+                <ArtifactStudio 
+                  state={state}
+                  url={window.location.href} 
+                  storageMode={state.storageMode} 
+                />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
 
     </div>
   );

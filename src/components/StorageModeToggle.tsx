@@ -17,8 +17,9 @@ export function StorageModeToggle({ value, onChange }: StorageModeToggleProps) {
     <div className="flex p-1 bg-ankahe-surface-soft rounded-sm w-fit border border-ankahe-border">
       <button
         onClick={() => onChange("memory")}
+        aria-pressed={value === "memory"}
         className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-all",
+          "min-h-11 flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
           value === "memory" 
             ? "bg-ankahe-surface text-ankahe-text shadow-sm" 
             : "text-ankahe-muted hover:text-ankahe-text"
@@ -29,8 +30,9 @@ export function StorageModeToggle({ value, onChange }: StorageModeToggleProps) {
       </button>
       <button
         onClick={() => onChange("url")}
+        aria-pressed={value === "url"}
         className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-all",
+          "min-h-11 flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
           value === "url" 
             ? "bg-ankahe-surface text-ankahe-text shadow-sm" 
             : "text-ankahe-muted hover:text-ankahe-text"

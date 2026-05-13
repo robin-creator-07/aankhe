@@ -4,11 +4,9 @@
  */
 
 import { useState } from "react";
-import { ModeConfig, ManualState, Visibility, ComposedManual } from "../lib/schemaTypes";
+import { ModeConfig, ManualState, Visibility } from "../lib/schemaTypes";
 import { QuestionStep } from "./QuestionStep";
 import { cn } from "../lib/utils";
-import { THEME_ENGINE } from "../lib/themeEngine";
-import { ChevronLeft, ChevronRight, LayoutDashboard, Palette } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 interface FormRendererProps {
@@ -27,7 +25,6 @@ export function FormRenderer({
   onFinish
 }: FormRendererProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const theme = THEME_ENGINE[config.id];
 
   const currentQuestion = config.questions[currentStepIndex];
   const section = config.sections.find(s => s.id === currentQuestion.sectionId);
@@ -54,7 +51,7 @@ export function FormRenderer({
   return (
     <div className="space-y-12">
       {/* Header / Section Indicator */}
-      <header className="space-y-4">
+      <div className="space-y-4">
         <div className="flex items-center justify-between text-xs font-bold text-ankahe-muted uppercase tracking-widest">
           <div className="flex items-center gap-2">
             <span className={cn("px-2 py-0.5 rounded bg-ankahe-surface-soft text-ankahe-text")}>
@@ -74,7 +71,7 @@ export function FormRenderer({
             transition={{ type: "spring", bounce: 0, duration: 0.5 }}
           />
         </div>
-      </header>
+      </div>
 
       {/* Main Form Area */}
       <AnimatePresence mode="wait">
@@ -105,11 +102,17 @@ export function FormRenderer({
           <button
             key={q.id}
             onClick={() => setCurrentStepIndex(i)}
-            className={cn(
-              "w-2 h-2 rounded-full transition-all",
-              i === currentStepIndex ? "w-6 bg-ankahe-accent-dark" : (state.answers[q.id] ? "bg-ankahe-accent/50" : "bg-ankahe-surface-soft hover:bg-ankahe-border")
-            )}
-          />
+            className="group min-w-11 min-h-11 inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
+            aria-label={`Go to question ${i + 1}: ${q.label}`}
+            aria-current={i === currentStepIndex ? "step" : undefined}
+          >
+            <span
+              className={cn(
+                "block h-2 rounded-full transition-all",
+                i === currentStepIndex ? "w-6 bg-ankahe-accent-dark" : (state.answers[q.id] ? "w-2 bg-ankahe-accent/60" : "w-2 bg-ankahe-surface-soft group-hover:bg-ankahe-border")
+              )}
+            />
+          </button>
         ))}
       </div>
     </div>

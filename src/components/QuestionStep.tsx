@@ -5,9 +5,8 @@
 
 import { Question, Visibility } from "../lib/schemaTypes";
 import { cn } from "../lib/utils";
-import { Eye, EyeOff, Shield, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import { SoftButton } from "./SoftButton";
-import { motion, AnimatePresence } from "motion/react";
 
 interface QuestionStepProps {
   question: Question;
@@ -101,8 +100,9 @@ function VisibilityButton({ active, onClick, label, icon }: any) {
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        "flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all border border-transparent",
+        "min-h-11 flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
         active 
           ? "bg-ankahe-surface text-ankahe-text shadow-sm border-ankahe-border" 
           : "text-ankahe-muted hover:text-ankahe-text hover:bg-ankahe-surface/50"
@@ -122,7 +122,7 @@ function InputComponent({ type, options, min, max, value, onChange, placeholder 
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder || "Type your answer..."}
-        className="w-full text-2xl font-display bg-transparent border-b-2 border-ankahe-border py-2 focus:border-ankahe-accent focus:outline-none transition-colors rounded-none outline-none text-ankahe-text placeholder:text-ankahe-muted/50"
+        className="w-full text-2xl font-display bg-transparent border-b-2 border-ankahe-border py-2 focus:border-ankahe-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent/40 transition-colors rounded-none outline-none text-ankahe-text placeholder:text-ankahe-muted/50"
         aria-label={placeholder || "Answer to question"}
       />
     );
@@ -170,6 +170,7 @@ function InputComponent({ type, options, min, max, value, onChange, placeholder 
           return (
             <button
               key={opt}
+              aria-pressed={isSelected}
               onClick={() => {
                 let nextVal = Array.isArray(value) ? [...value] : (value ? [value] : []);
                 if (isSelected) {
@@ -180,9 +181,9 @@ function InputComponent({ type, options, min, max, value, onChange, placeholder 
                 onChange(nextVal);
               }}
               className={cn(
-                "px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent",
+                "min-h-11 px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
                 isSelected 
-                  ? "bg-ankahe-accent text-white border-ankahe-accent" 
+                  ? "bg-ankahe-accent text-ankahe-on-accent border-ankahe-accent" 
                   : "bg-ankahe-surface border-ankahe-border text-ankahe-text hover:border-ankahe-accent/50"
               )}
             >
@@ -201,10 +202,11 @@ function InputComponent({ type, options, min, max, value, onChange, placeholder 
           <button
             key={opt}
             onClick={() => onChange(opt)}
+            aria-pressed={value === opt}
             className={cn(
-              "px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent",
+              "min-h-11 px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
               value === opt 
-                ? "bg-ankahe-accent text-white border-ankahe-accent" 
+                ? "bg-ankahe-accent text-ankahe-on-accent border-ankahe-accent" 
                 : "bg-ankahe-surface border-ankahe-border text-ankahe-text hover:border-ankahe-accent/50"
             )}
           >
