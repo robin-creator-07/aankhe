@@ -3,24 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Switchboard } from './components/Switchboard';
-import { StorageMode, ModeId } from './lib/schemaTypes';
+import { ModeId } from './lib/schemaTypes';
 import { useManualState } from './hooks/useManualState';
-import { FormRenderer } from './components/FormRenderer';
-import { ArtifactStudio } from './components/ArtifactStudio';
-import { AnimatePresence, motion } from 'motion/react';
-import { SoftButton } from './components/SoftButton';
-import { PROTOCOL_MANIFEST } from './lib/protocolManifest';
-import { THEME_ENGINE } from './lib/themeEngine';
-import { ManualPreview } from './components/ManualPreview';
-import { composeManual } from './lib/manualComposer';
-import { PrivacyMeter } from './components/PrivacyMeter';
-import { cn } from './lib/utils';
-import { ChevronLeft, LayoutDashboard, Sparkles, User, Briefcase, FileText } from 'lucide-react';
+import { ManualBuilder } from './components/ManualBuilder';
 import { SiteHeader } from './components/SiteHeader';
 import { SiteFooter } from './components/SiteFooter';
+import { SoftButton } from './components/SoftButton';
 
 function AppContent() {
   const {
@@ -111,121 +101,6 @@ function AppContent() {
   );
 }
 
-function ManualBuilder({
-  state,
-  updateAnswer,
-  updateVisibility,
-  setStorageMode,
-  onBack,
-}: any) {
-  const { mode } = useParams<{ mode: ModeId }>();
-  const config = PROTOCOL_MANIFEST[mode || "me"];
-  const [view, setView] = useState<"build" | "artifact">("build");
-  const composed = useMemo(() => composeManual(state), [state]);
-
-  if (!mode || (mode !== "me" && mode !== "work")) {
-    return <Navigate to="/" />;
-  }
-
-  return (
-    <div className="w-full font-sans transition-colors duration-700 bg-ankahe-bg text-ankahe-text relative">
-      {/* Top Nav */}
-      <nav aria-label="Manual builder" className="sticky top-16 z-40 bg-ankahe-bg/80 backdrop-blur-md border-b border-ankahe-border/50">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <button
-            onClick={onBack}
-            className="min-h-11 min-w-11 flex items-center justify-center gap-2 text-ankahe-muted hover:text-ankahe-text transition-colors font-medium text-sm"
-            aria-label="Back to Hub"
-          >
-            <ChevronLeft size={18} />
-            <span className="hidden md:inline">Back to Hub</span>
-          </button>
-
-          <div className="flex bg-ankahe-border/30 p-1 rounded-sm" aria-label="Manual view selector">
-            <button
-              onClick={() => setView('build')}
-              className={cn(
-                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
-                view === 'build' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
-              )}
-            >
-              <FileText size={14} />
-              Draft
-            </button>
-            <button
-              onClick={() => setView('artifact')}
-              className={cn(
-                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
-                view === 'artifact' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
-              )}
-            >
-              <Sparkles size={14} />
-              Artifact
-            </button>
-          </div>
-
-          <div className="hidden md:block">
-            <PrivacyMeter state={state} compact />
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <AnimatePresence mode="wait">
-          {view === "build" ? (
-            <motion.div
-              key="build"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="grid lg:grid-cols-[1fr_450px] gap-12"
-            >
-              {/* Form Side */}
-              <div className="space-y-12">
-                <FormRenderer
-                  config={config}
-                  state={state}
-                  updateAnswer={updateAnswer}
-                  updateVisibility={updateVisibility}
-                  onFinish={() => setView("artifact")}
-                />
-              </div>
-
-              {/* Preview Side (Desktop only) */}
-              <div className="hidden lg:block space-y-8 sticky top-28">
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-ankahe-muted uppercase tracking-widest px-1">
-                    Live Manual Preview
-                  </h3>
-                  <ManualPreview
-                    manual={composed}
-                    mode={state.mode}
-                    className="h-[600px] shadow-sm border-ankahe-border"
-                  />
-                </div>
-                <PrivacyMeter state={state} />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="artifact"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              <ArtifactStudio 
-                state={state}
-                url={window.location.href} 
-                storageMode={state.storageMode} 
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-    </div>
-  );
-}
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
 

@@ -9,6 +9,7 @@ import { StorageModeToggle } from "./StorageModeToggle";
 import { motion } from "motion/react";
 import { SAMPLE_PERSONAL_STATE, SAMPLE_WORK_STATE } from "../lib/sampleState";
 import { cn } from "../lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface SwitchboardProps {
   onStart: (mode: ModeId) => void;
@@ -49,25 +50,29 @@ export function Switchboard({ onStart, onTrySample, storageMode, onStorageModeCh
       </section>
 
       {/* Modes */}
-      <section className="grid md:grid-cols-2 gap-6">
-        <ModeCard 
-          id="me"
-          title="Me"
-          label="How to understand me"
-          description="Write the things people should know before they guess wrong."
-          themeColor="ankahe-clay"
-          onClick={() => onStart("me")}
-          onSampleClick={() => onTrySample(SAMPLE_PERSONAL_STATE)}
-        />
-        <ModeCard 
-          id="work"
-          title="Work"
-          label="How to work with me"
-          description="Share how you focus, decide, talk, and build trust."
-          themeColor="ankahe-sage"
-          onClick={() => onStart("work")}
-          onSampleClick={() => onTrySample(SAMPLE_WORK_STATE)}
-        />
+      <section className="grid lg:grid-cols-12 gap-6 items-start">
+        <div className="lg:col-span-7">
+          <ModeCard 
+            id="me"
+            title="Me"
+            label="How to understand me"
+            description="Write the things people should know before they guess wrong. Context for care, boundaries, and personal connection."
+            themeColor="ankahe-clay"
+            onClick={() => onStart("me")}
+            onSampleClick={() => onTrySample(SAMPLE_PERSONAL_STATE)}
+          />
+        </div>
+        <div className="lg:col-span-5 lg:mt-12">
+          <ModeCard 
+            id="work"
+            title="Work"
+            label="How to work with me"
+            description="Share how you focus, decide, talk, and build trust in a professional context."
+            themeColor="ankahe-sage"
+            onClick={() => onStart("work")}
+            onSampleClick={() => onTrySample(SAMPLE_WORK_STATE)}
+          />
+        </div>
       </section>
 
       {/* Settings / Footer */}
@@ -89,22 +94,25 @@ export function Switchboard({ onStart, onTrySample, storageMode, onStorageModeCh
 function ModeCard({ title, label, description, onClick, onSampleClick }: any) {
   return (
     <motion.article 
-      whileHover={{ y: -2 }}
-      className="bg-ankahe-surface border border-ankahe-border p-8 rounded-lg transition-all hover:shadow-sm"
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="p-1.5 rounded-[2rem] bg-ankahe-surface-soft/50 ring-1 ring-ankahe-border/50 group"
     >
-      <div className="space-y-3 mb-8">
-        <h2 className="text-3xl font-display font-medium text-ankahe-text">{title}</h2>
-        <p className="text-sm font-semibold text-ankahe-accent uppercase tracking-wider">{label}</p>
-        <p className="text-ankahe-muted leading-relaxed">{description}</p>
-      </div>
-      <div className="flex items-center gap-4">
-        <SoftButton size="md" className="rounded-md" onClick={onClick}>Start a manual</SoftButton>
-        <button 
-          onClick={onSampleClick}
-          className="min-h-11 inline-flex items-center text-sm font-medium text-ankahe-muted hover:text-ankahe-text transition-colors underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
-        >
-          See a sample
-        </button>
+      <div className="bg-ankahe-surface rounded-[calc(2rem-0.375rem)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] p-8 md:p-12 h-full flex flex-col justify-between min-h-[320px]">
+        <div className="space-y-4 mb-12">
+          <p className="text-xs font-bold text-ankahe-accent uppercase tracking-[0.2em]">{label}</p>
+          <h2 className="text-4xl md:text-5xl font-display font-medium text-ankahe-text">{title}</h2>
+          <p className="text-ankahe-muted leading-relaxed text-lg">{description}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 mt-auto pt-8 border-t border-ankahe-border/40">
+          <SoftButton size="md" onClick={onClick} icon={<ArrowRight size={16} />}>Start a manual</SoftButton>
+          <button 
+            onClick={onSampleClick}
+            className="min-h-11 px-2 inline-flex items-center text-sm font-medium text-ankahe-muted hover:text-ankahe-text transition-colors underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
+          >
+            See a sample
+          </button>
+        </div>
       </div>
     </motion.article>
   );
