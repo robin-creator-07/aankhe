@@ -26,6 +26,7 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
   const artifactRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [showQR, setShowQR] = useState(false);
   
   const [viewMode, setViewMode] = useState<"public" | "private">("public");
@@ -68,22 +69,29 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
     window.print();
   };
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(secureSharedUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(secureSharedUrl);
+      setCopyError(false);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+      setCopyError(true);
+    }
   };
 
   return (
     <div className="space-y-12 pb-24">
       <div aria-live="polite" className="sr-only">
         {copied ? "Link copied to clipboard" : ""}
+        {copyError ? "Could not copy the link" : ""}
         {isExporting ? "Exporting image..." : ""}
       </div>
-      <header className="space-y-4 text-center md:text-left">
+      <div className="space-y-4 text-center md:text-left">
         <h2 className="text-4xl font-display font-medium text-ankahe-text">Artifact Studio</h2>
         <p className="text-ankahe-muted">Transform your manual into a shareable asset.</p>
-      </header>
+      </div>
 
       <div className="grid lg:grid-cols-[1fr_400px] gap-12 items-start">
         {/* Preview Container */}
@@ -95,7 +103,7 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
           </div>
           
           <div className="flex flex-wrap justify-center gap-4">
-            <SoftButton onClick={exportAsImage} disabled={isExporting} className="gap-2 bg-ankahe-accent text-white border-none py-3">
+            <SoftButton onClick={exportAsImage} disabled={isExporting} className="gap-2 bg-ankahe-accent text-ankahe-on-accent border-none py-3">
               <Download size={18} />
               {isExporting ? "Exporting..." : "Save Image"}
             </SoftButton>
@@ -114,13 +122,15 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
               <div className="flex bg-ankahe-surface-soft p-1 rounded-sm w-fit border border-ankahe-border">
                 <button
                   onClick={() => setViewMode("public")}
-                  className={cn("px-4 py-1.5 rounded-sm text-sm font-medium transition-all", viewMode === "public" ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text")}
+                  aria-pressed={viewMode === "public"}
+                  className={cn("min-h-11 px-4 py-1.5 rounded-sm text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2", viewMode === "public" ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text")}
                 >
                   Share Version
                 </button>
                 <button
                   onClick={() => setViewMode("private")}
-                  className={cn("px-4 py-1.5 rounded-sm text-sm font-medium transition-all", viewMode === "private" ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text")}
+                  aria-pressed={viewMode === "private"}
+                  className={cn("min-h-11 px-4 py-1.5 rounded-sm text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2", viewMode === "private" ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text")}
                 >
                   Private Version
                 </button>
@@ -141,8 +151,9 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
                     <button
                       key={sec.id}
                       onClick={() => toggleSection(sec.id)}
+                      aria-pressed={!isExcluded}
                       className={cn(
-                        "px-3 py-1.5 rounded-sm text-xs font-medium border transition-colors",
+                        "min-h-11 px-3 py-1.5 rounded-sm text-xs font-medium border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2",
                         isExcluded 
                           ? "bg-ankahe-surface-soft border-ankahe-border text-ankahe-muted" 
                           : "bg-ankahe-accent/10 border-ankahe-accent text-ankahe-accent-dark"
@@ -170,15 +181,16 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
                   </div>
                   <button 
                     onClick={copyLink}
-                    className="p-2 bg-ankahe-surface rounded-sm shadow-sm hover:bg-ankahe-surface-soft transition-colors text-ankahe-text"
+                    aria-label={copied ? "Link copied" : "Copy share link"}
+                    className="min-h-11 min-w-11 p-2 bg-ankahe-surface rounded-sm shadow-sm hover:bg-ankahe-surface-soft transition-colors text-ankahe-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
                   >
-                    {copied ? <Check size={16} className="text-green-600" /> : <Copy size={16} />}
+                    {copied ? <Check size={16} className="text-ankahe-success" /> : <Copy size={16} />}
                   </button>
                 </div>
 
                 {secureSharedUrl.length > 2000 && (
-                  <div className="p-3 bg-amber-50 rounded-sm border border-amber-100 flex gap-3 text-xs text-amber-800 leading-relaxed">
-                    <AlertCircle size={16} className="shrink-0 text-amber-500" />
+                  <div className="p-3 bg-ankahe-warning-soft rounded-sm border border-ankahe-warning/25 flex gap-3 text-xs text-ankahe-warning leading-relaxed">
+                    <AlertCircle size={16} className="shrink-0 text-ankahe-warning" />
                     <p>
                       This URL is very long. Some older apps or browsers might struggle to open it. Saving it as an image or PDF is recommended.
                     </p>
@@ -199,7 +211,7 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
                     <motion.div 
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white p-6 rounded-sm border border-ankahe-border flex flex-col items-center gap-4 shadow-sm"
+                      className="bg-ankahe-on-accent p-6 rounded-sm border border-ankahe-border flex flex-col items-center gap-4 shadow-sm"
                     >
                       <QRCodeSVG value={secureSharedUrl} size={200} level="M" />
                       <p className="text-xs text-ankahe-muted font-medium text-center">

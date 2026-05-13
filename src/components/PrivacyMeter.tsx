@@ -15,16 +15,16 @@ interface PrivacyMeterProps {
 export function PrivacyMeter({ state, compact }: PrivacyMeterProps) {
   const { length, category } = getCurrentURLSize();
   const urlStatus = {
-    safe: { label: "QR-Safe", color: "text-green-600" },
-    long: { label: "Getting Long", color: "text-amber-600" },
-    excessive: { label: "Too Large", color: "text-red-600" }
+    safe: { label: "QR-Safe", color: "text-ankahe-success" },
+    long: { label: "Getting Long", color: "text-ankahe-warning" },
+    excessive: { label: "Too Large", color: "text-ankahe-danger" }
   };
 
   if (compact) {
     return (
       <div className="flex items-center gap-4 text-xs font-medium text-ankahe-muted uppercase tracking-wider">
         <div className="flex items-center gap-1.5">
-          <Shield size={14} className="text-green-600" />
+          <Shield size={14} className="text-ankahe-success" />
           No Account / No Database
         </div>
         <div className="w-1 h-1 bg-ankahe-border rounded-full" />
@@ -37,10 +37,10 @@ export function PrivacyMeter({ state, compact }: PrivacyMeterProps) {
     <div className="bg-ankahe-surface rounded-sm border border-ankahe-border p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-medium font-display text-ankahe-text flex items-center gap-2">
-          <Shield size={18} className="text-green-600" />
+          <Shield size={18} className="text-ankahe-success" />
           Privacy Meter
         </h3>
-        <span className="text-xs bg-green-50 text-green-700 font-mono px-2 py-0.5 rounded-sm">Safe</span>
+        <span className="text-xs bg-ankahe-success-soft text-ankahe-success font-mono px-2 py-0.5 rounded-sm">Safe</span>
       </div>
 
       <div className="space-y-3">

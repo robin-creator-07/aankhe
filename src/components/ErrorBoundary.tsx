@@ -37,14 +37,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+        <div className="min-h-screen flex items-center justify-center bg-ankahe-bg p-6">
           <div className="glass-card max-w-md w-full p-8 space-y-6 text-center">
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 bg-ankahe-danger-soft text-ankahe-danger rounded-full flex items-center justify-center mx-auto">
               <ShieldAlert size={32} />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-display font-medium text-slate-900">Something went wrong</h2>
-              <p className="text-slate-500 text-sm">
+              <h2 className="text-2xl font-display font-medium text-ankahe-text">Something went wrong</h2>
+              <p className="text-ankahe-muted text-sm">
                 We encountered an unexpected error while composing your manual.
                 Your data in the URL might be corrupted, or memory state failed.
               </p>
