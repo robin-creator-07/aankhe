@@ -1,0 +1,6 @@
+{
+  "name": "Interpersonal OS",
+  "description": "A privacy-first web application for creating personal and professional operating manuals. Stateless, no account, no database.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

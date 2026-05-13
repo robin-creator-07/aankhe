@@ -1,0 +1,64 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React from 'react';
+import { ShieldAlert } from 'lucide-react';
+import { SoftButton } from './SoftButton';
+
+interface Props {
+  children: React.ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error?: Error;
+}
+
+export class ErrorBoundary extends React.Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
+
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
+  }
+
+  private handleReset = () => {
+    window.location.hash = '';
+    window.location.reload();
+  };
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+          <div className="glass-card max-w-md w-full p-8 space-y-6 text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+              <ShieldAlert size={32} />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-display font-medium text-slate-900">Something went wrong</h2>
+              <p className="text-slate-500 text-sm">
+                We encountered an unexpected error while composing your manual.
+                Your data in the URL might be corrupted, or memory state failed.
+              </p>
+            </div>
+            <div className="pt-4 flex flex-col gap-3">
+              <SoftButton onClick={this.handleReset} variant="primary" className="w-full">
+                Reset & Start Over
+              </SoftButton>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (this as any).props.children;
+  }
+}

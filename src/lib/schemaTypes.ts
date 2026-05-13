@@ -1,0 +1,73 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export type ModeId = "me" | "work" | "talk" | "us";
+
+export type QuestionType = "text" | "textarea" | "select" | "multiSelect" | "scale" | "rank" | "pairedChoice" | "yesNoMaybe";
+
+export type Visibility = "share" | "private" | "hide";
+
+export type StorageMode = "memory" | "url";
+
+export interface Question {
+  id: string;
+  mode: ModeId;
+  sectionId: string;
+  label: string; // The UI question string
+  helperText?: string;
+  type: QuestionType;
+  options?: string[];
+  min?: number;
+  max?: number;
+  leftLabel?: string;
+  rightLabel?: string;
+  defaultVisibility: Visibility;
+  manualTemplate?: string;
+  required?: boolean;
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface ModeConfig {
+  id: ModeId;
+  name: string;
+  label: string;
+  description: string;
+  theme: ModeId;
+  sections: Section[];
+  questions: Question[];
+}
+
+export interface ManualState {
+  mode: ModeId;
+  answers: Record<string, string | string[] | number>;
+  visibilityByQuestion: Record<string, Visibility>;
+  storageMode: StorageMode;
+  updatedAt: string;
+}
+
+export interface ComposedSection {
+  id: string;
+  title: string;
+  description: string;
+  details: string[];
+}
+
+export interface ComposedManual {
+  id: string;
+  mode: ModeId;
+  title: string;
+  subtitle: string;
+  atAGlance: string;
+  sections: ComposedSection[];
+  answeredCount: number;
+  shareableCount: number;
+  privateCount: number;
+  hasPrivateItems: boolean;
+}

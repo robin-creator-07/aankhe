@@ -1,0 +1,219 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Question, Visibility } from "../lib/schemaTypes";
+import { cn } from "../lib/utils";
+import { Eye, EyeOff, Shield, Lock } from "lucide-react";
+import { SoftButton } from "./SoftButton";
+import { motion, AnimatePresence } from "motion/react";
+
+interface QuestionStepProps {
+  question: Question;
+  value: any;
+  onChange: (val: any) => void;
+  visibility: Visibility;
+  onVisibilityChange: (vis: Visibility) => void;
+  onNext: () => void;
+  onBack?: () => void;
+  isFirst: boolean;
+  isLast: boolean;
+}
+
+export function QuestionStep({
+  question,
+  value,
+  onChange,
+  visibility,
+  onVisibilityChange,
+  onNext,
+  onBack,
+  isFirst,
+  isLast
+}: QuestionStepProps) {
+  return (
+    <div className="space-y-8">
+      {/* Visibility Control */}
+      <div className="flex items-center gap-3 bg-ankahe-surface-soft p-2 rounded-2xl w-fit">
+        <VisibilityButton
+          active={visibility === "share"}
+          onClick={() => onVisibilityChange("share")}
+          label="Included"
+          icon={<Eye size={14} />}
+        />
+        <VisibilityButton
+          active={visibility === "private"}
+          onClick={() => onVisibilityChange("private")}
+          label="Private"
+          icon={<Lock size={14} />}
+        />
+        <VisibilityButton
+          active={visibility === "hide"}
+          onClick={() => onVisibilityChange("hide")}
+          label="Omitted"
+          icon={<EyeOff size={14} />}
+        />
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-3xl md:text-4xl font-display font-medium text-ankahe-text leading-tight">
+          {question.label}
+        </h2>
+        {question.helperText && (
+          <p className="text-lg text-ankahe-muted leading-relaxed max-w-xl">
+            {question.helperText}
+          </p>
+        )}
+      </div>
+
+      <div className="py-4">
+        <InputComponent 
+          type={question.type} 
+          options={question.options} 
+          min={question.min} 
+          max={question.max} 
+          value={value} 
+          onChange={onChange} 
+          placeholder={question.helperText}
+        />
+      </div>
+
+      <div className="flex items-center gap-4 pt-8">
+        {!isFirst && (
+          <SoftButton variant="secondary" onClick={onBack}>
+            Back
+          </SoftButton>
+        )}
+        <SoftButton 
+          className="flex-1 md:flex-none"
+          onClick={onNext}
+          variant={value ? "primary" : "secondary"}
+        >
+          {value ? (isLast ? "Review Manual" : "Add to my manual") : "Skip for now"}
+        </SoftButton>
+      </div>
+    </div>
+  );
+}
+
+function VisibilityButton({ active, onClick, label, icon }: any) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all border border-transparent",
+        active 
+          ? "bg-ankahe-surface text-ankahe-text shadow-sm border-ankahe-border" 
+          : "text-ankahe-muted hover:text-ankahe-text hover:bg-ankahe-surface/50"
+      )}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+function InputComponent({ type, options, min, max, value, onChange, placeholder }: any) {
+  if (type === "text") {
+    return (
+      <input
+        type="text"
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder || "Type your answer..."}
+        className="w-full text-2xl font-display bg-transparent border-b-2 border-ankahe-border py-2 focus:border-ankahe-accent focus:outline-none transition-colors rounded-none outline-none text-ankahe-text placeholder:text-ankahe-muted/50"
+        aria-label={placeholder || "Answer to question"}
+      />
+    );
+  }
+
+  if (type === "textarea") {
+    return (
+      <textarea
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder || "Type your answer..."}
+        rows={4}
+        className="w-full text-xl font-display bg-ankahe-surface border border-ankahe-border rounded-sm p-6 focus:border-ankahe-accent focus:outline-none focus-visible:ring-1 focus-visible:ring-ankahe-accent/50 transition-colors resize-none shadow-sm text-ankahe-text placeholder:text-ankahe-muted/50"
+        aria-label={placeholder || "Answer to question"}
+      />
+    );
+  }
+
+  if (type === "scale") {
+    return (
+      <div className="space-y-6">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value || min}
+          onChange={(e) => onChange(parseInt(e.target.value))}
+          className="w-full accent-ankahe-accent focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ankahe-accent outline-none"
+          aria-label={`Scale from ${min} to ${max}`}
+        />
+        <div className="flex justify-between text-sm font-bold text-ankahe-muted uppercase tracking-widest px-1">
+          <span>Min</span>
+          <span className="text-ankahe-text text-xl font-display">{value || min}</span>
+          <span>Max</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "multiSelect") {
+    return (
+      <div className="flex flex-wrap gap-3">
+        {options.map((opt: string) => {
+          const isSelected = Array.isArray(value) ? value.includes(opt) : value === opt;
+          return (
+            <button
+              key={opt}
+              onClick={() => {
+                let nextVal = Array.isArray(value) ? [...value] : (value ? [value] : []);
+                if (isSelected) {
+                  nextVal = nextVal.filter(v => v !== opt);
+                } else {
+                  nextVal.push(opt);
+                }
+                onChange(nextVal);
+              }}
+              className={cn(
+                "px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent",
+                isSelected 
+                  ? "bg-ankahe-accent text-white border-ankahe-accent" 
+                  : "bg-ankahe-surface border-ankahe-border text-ankahe-text hover:border-ankahe-accent/50"
+              )}
+            >
+              {opt}
+            </button>
+          )
+        })}
+      </div>
+    );
+  }
+
+  if (type === "select") {
+    return (
+      <div className="flex flex-wrap gap-3">
+        {options.map((opt: string) => (
+          <button
+            key={opt}
+            onClick={() => onChange(opt)}
+            className={cn(
+              "px-6 py-3 rounded-sm text-lg font-medium transition-all border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent",
+              value === opt 
+                ? "bg-ankahe-accent text-white border-ankahe-accent" 
+                : "bg-ankahe-surface border-ankahe-border text-ankahe-text hover:border-ankahe-accent/50"
+            )}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+}

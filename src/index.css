@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Spectral", serif;
+
+  --color-ankahe-bg: #F8F1EA;
+  --color-ankahe-surface: #FFFDF8;
+  --color-ankahe-surface-soft: #F3E7DD;
+  --color-ankahe-text: #2A211D;
+  --color-ankahe-muted: #756A63;
+  --color-ankahe-border: #E7D9CF;
+  --color-ankahe-accent: #B96F55;
+  --color-ankahe-accent-dark: #3A2923;
+  --color-ankahe-accent-soft: #EBC8B8;
+  --color-ankahe-sage: #9AAB8E;
+  --color-ankahe-clay: #C47C62;
+  --color-ankahe-oat: #E8D9C8;
+}
+
+@layer base {
+  body {
+    @apply antialiased text-ankahe-text bg-ankahe-bg;
+    background-color: var(--color-ankahe-bg);
+  }
+}
+
+.glass-card {
+  @apply bg-ankahe-surface/90 border border-ankahe-border shadow-sm rounded-lg;
+}
+
+.markdown-body {
+  @apply prose prose-slate max-w-none;
+}
+
+@media print {
+  body {
+    background: transparent !important;
+  }
+  .glass-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  header, nav, button, .sticky {
+    display: none !important;
+  }
+  .glass-card.p-8.md\:p-12.overflow-y-auto.max-h-screen {
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 0 !important;
+  }
+}
