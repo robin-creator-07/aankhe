@@ -3,39 +3,36 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import { Switchboard } from './components/Switchboard';
 import { StorageMode, ModeId } from './lib/schemaTypes';
 import { useManualState } from './hooks/useManualState';
 import { FormRenderer } from './components/FormRenderer';
+import { ArtifactStudio } from './components/ArtifactStudio';
 import { AnimatePresence, motion } from 'motion/react';
 import { SoftButton } from './components/SoftButton';
 import { PROTOCOL_MANIFEST } from './lib/protocolManifest';
+import { THEME_ENGINE } from './lib/themeEngine';
 import { ManualPreview } from './components/ManualPreview';
 import { composeManual } from './lib/manualComposer';
 import { PrivacyMeter } from './components/PrivacyMeter';
 import { cn } from './lib/utils';
-import { ChevronLeft, Sparkles, FileText } from 'lucide-react';
+import { ChevronLeft, LayoutDashboard, Sparkles, User, Briefcase, FileText } from 'lucide-react';
 import { SiteHeader } from './components/SiteHeader';
 import { SiteFooter } from './components/SiteFooter';
-import { ManualSkeleton } from './components/SkeletonShimmer';
-
-const ArtifactStudio = lazy(() =>
-  import('./components/ArtifactStudio').then((module) => ({ default: module.ArtifactStudio }))
-);
 
 function AppContent() {
-  const { 
-    state, 
+  const {
+    state,
     isInitialized,
     hashError,
     clearHashError,
-    setMode, 
-    updateAnswer, 
-    updateVisibility, 
+    setMode,
+    updateAnswer,
+    updateVisibility,
     setStorageMode,
-    resetState
+    resetState,
   } = useManualState();
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,57 +51,79 @@ function AppContent() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col font-sans selection:bg-ankahe-accent-soft selection:text-ankahe-text">
-      <SiteHeader />
+      <SiteHeader onStart={handleStart} />
       <main className="flex-1 flex flex-col items-center w-full">
         <div className="w-full">
           <Routes>
-            <Route path="/" element={
-              <div className="bg-ankahe-bg">
-                {hashError && (
-                  <div className="max-w-4xl mx-auto px-6 pt-6">
-                    <div className="bg-ankahe-surface-soft border border-ankahe-border text-ankahe-text p-4 rounded-lg flex items-start gap-4 shadow-sm">
-                      <div className="flex-1 space-y-1">
-                        <h4 className="font-semibold text-ankahe-accent-dark">Link could not be restored</h4>
-                        <p className="text-sm">The manual link appears to be corrupted or incomplete. You can start fresh or try another link.</p>
+            <Route
+              path="/"
+              element={
+                <div className="bg-ankahe-bg">
+                  {hashError && (
+                    <div className="max-w-4xl mx-auto px-6 pt-6">
+                      <div className="bg-ankahe-surface-soft border border-ankahe-border text-ankahe-text p-4 rounded-lg flex items-start gap-4 shadow-sm">
+                        <div className="flex-1 space-y-1">
+                          <h4 className="font-semibold text-ankahe-accent-dark">
+                            Link could not be restored
+                          </h4>
+                          <p className="text-sm">
+                            The manual link appears to be corrupted or
+                            incomplete. You can start fresh or try another link.
+                          </p>
+                        </div>
+                        <SoftButton
+                          size="sm"
+                          variant="secondary"
+                          onClick={clearHashError}
+                          className="bg-ankahe-surface text-ankahe-text border-ankahe-border"
+                        >
+                          Dismiss
+                        </SoftButton>
                       </div>
-                      <SoftButton size="sm" variant="secondary" onClick={clearHashError} className="bg-ankahe-surface text-ankahe-text border-ankahe-border">
-                        Dismiss
-                      </SoftButton>
                     </div>
-                  </div>
-                )}
-                <Switchboard 
-                  storageMode={state.storageMode} 
-                  onStorageModeChange={setStorageMode}
-                  onStart={handleStart}
-                  onTrySample={handleTrySample}
+                  )}
+                  <Switchboard
+                    storageMode={state.storageMode}
+                    onStorageModeChange={setStorageMode}
+                    onStart={handleStart}
+                    onTrySample={handleTrySample}
+                  />
+                </div>
+              }
+            />
+            <Route
+              path="/manual/:mode"
+              element={
+                <ManualBuilder
+                  state={state}
+                  updateAnswer={updateAnswer}
+                  updateVisibility={updateVisibility}
+                  setStorageMode={setStorageMode}
+                  onBack={() => navigate("/")}
                 />
-              </div>
-            } />
-            <Route path="/manual/:mode" element={
-              <ManualBuilder 
-                state={state} 
-                updateAnswer={updateAnswer} 
-                updateVisibility={updateVisibility}
-                setStorageMode={setStorageMode}
-                onBack={() => navigate('/')}
-              />
-            } />
+              }
+            />
           </Routes>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter onStart={handleStart} />
     </div>
   );
 }
 
-function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, onBack }: any) {
+function ManualBuilder({
+  state,
+  updateAnswer,
+  updateVisibility,
+  setStorageMode,
+  onBack,
+}: any) {
   const { mode } = useParams<{ mode: ModeId }>();
-  const config = PROTOCOL_MANIFEST[mode || 'me'];
-  const [view, setView] = useState<'build' | 'artifact'>('build');
+  const config = PROTOCOL_MANIFEST[mode || "me"];
+  const [view, setView] = useState<"build" | "artifact">("build");
   const composed = useMemo(() => composeManual(state), [state]);
 
-  if (!mode || (mode !== 'me' && mode !== 'work')) {
+  if (!mode || (mode !== "me" && mode !== "work")) {
     return <Navigate to="/" />;
   }
 
@@ -113,7 +132,7 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
       {/* Top Nav */}
       <nav aria-label="Manual builder" className="sticky top-16 z-40 bg-ankahe-bg/80 backdrop-blur-md border-b border-ankahe-border/50">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <button 
+          <button
             onClick={onBack}
             className="min-h-11 min-w-11 flex items-center justify-center gap-2 text-ankahe-muted hover:text-ankahe-text transition-colors font-medium text-sm"
             aria-label="Back to Hub"
@@ -125,9 +144,8 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
           <div className="flex bg-ankahe-border/30 p-1 rounded-sm" aria-label="Manual view selector">
             <button
               onClick={() => setView('build')}
-              aria-pressed={view === 'build'}
               className={cn(
-                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
                 view === 'build' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
@@ -136,9 +154,8 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
             </button>
             <button
               onClick={() => setView('artifact')}
-              aria-pressed={view === 'artifact'}
               className={cn(
-                "min-h-11 flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
+                "flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-bold transition-all",
                 view === 'artifact' ? "bg-ankahe-surface text-ankahe-text shadow-sm" : "text-ankahe-muted hover:text-ankahe-text"
               )}
             >
@@ -155,8 +172,8 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         <AnimatePresence mode="wait">
-          {view === 'build' ? (
-            <motion.div 
+          {view === "build" ? (
+            <motion.div
               key="build"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -165,48 +182,52 @@ function ManualBuilder({ state, updateAnswer, updateVisibility, setStorageMode, 
             >
               {/* Form Side */}
               <div className="space-y-12">
-                <FormRenderer 
-                  config={config} 
-                  state={state} 
-                  updateAnswer={updateAnswer} 
+                <FormRenderer
+                  config={config}
+                  state={state}
+                  updateAnswer={updateAnswer}
                   updateVisibility={updateVisibility}
-                  onFinish={() => setView('artifact')}
+                  onFinish={() => setView("artifact")}
                 />
               </div>
 
               {/* Preview Side (Desktop only) */}
               <div className="hidden lg:block space-y-8 sticky top-28">
                 <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-ankahe-muted uppercase tracking-widest px-1">Live Manual Preview</h3>
-                  <ManualPreview manual={composed} mode={state.mode} className="h-[600px] shadow-sm border-ankahe-border" />
+                  <h3 className="text-xs font-bold text-ankahe-muted uppercase tracking-widest px-1">
+                    Live Manual Preview
+                  </h3>
+                  <ManualPreview
+                    manual={composed}
+                    mode={state.mode}
+                    className="h-[600px] shadow-sm border-ankahe-border"
+                  />
                 </div>
                 <PrivacyMeter state={state} />
               </div>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               key="artifact"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Suspense fallback={<ManualSkeleton />}>
-                <ArtifactStudio 
-                  state={state}
-                  url={window.location.href} 
-                  storageMode={state.storageMode} 
-                />
-              </Suspense>
+              <ArtifactStudio 
+                state={state}
+                url={window.location.href} 
+                storageMode={state.storageMode} 
+              />
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </main>
 
     </div>
   );
 }
 
-import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App() {
   return (
