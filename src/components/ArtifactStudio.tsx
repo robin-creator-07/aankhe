@@ -8,9 +8,9 @@ import { ManualState } from "../lib/schemaTypes";
 import { PROTOCOL_MANIFEST } from "../lib/protocolManifest";
 import { composeManual } from "../lib/manualComposer";
 import { generateSharedUrl } from "../lib/stateCompression";
-import { toPng } from "html-to-image";
 import { SoftButton } from "./SoftButton";
 import { ManualPreview } from "./ManualPreview";
+import { useArtifactExport } from "../hooks/useArtifactExport";
 import { Download, Printer, Share2, Copy, Check, QrCode, AlertCircle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "../lib/utils";
@@ -24,9 +24,6 @@ interface ArtifactStudioProps {
 
 export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps) {
   const artifactRef = useRef<HTMLDivElement>(null);
-  const [isExporting, setIsExporting] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [copyError, setCopyError] = useState(false);
   const [showQR, setShowQR] = useState(false);
   
   const [viewMode, setViewMode] = useState<"public" | "private">("public");
@@ -39,46 +36,19 @@ export function ArtifactStudio({ state, url, storageMode }: ArtifactStudioProps)
     return generateSharedUrl(state);
   }, [state]);
 
+  const {
+    isExporting,
+    copied,
+    copyError,
+    exportAsImage,
+    printManual,
+    copyLink
+  } = useArtifactExport(artifactRef, mode, secureSharedUrl);
+
   const toggleSection = (sectionId: string) => {
     setExcludedSections(prev => 
       prev.includes(sectionId) ? prev.filter(id => id !== sectionId) : [...prev, sectionId]
     );
-  };
-
-  const exportAsImage = async () => {
-    if (!artifactRef.current) return;
-    setIsExporting(true);
-    try {
-      const dataUrl = await toPng(artifactRef.current, {
-        cacheBust: true,
-        backgroundColor: "#F8F1EA",
-        pixelRatio: 2
-      });
-      const link = document.createElement("a");
-      link.download = `ankahe-manual-${mode}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error("Oops, something went wrong!", err);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const printManual = () => {
-    window.print();
-  };
-
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(secureSharedUrl);
-      setCopyError(false);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-      setCopyError(true);
-    }
   };
 
   return (

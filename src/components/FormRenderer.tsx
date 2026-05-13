@@ -8,6 +8,7 @@ import { ModeConfig, ManualState, Visibility } from "../lib/schemaTypes";
 import { QuestionStep } from "./QuestionStep";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
+import { useStepNavigation } from "../hooks/useStepNavigation";
 
 interface FormRendererProps {
   config: ModeConfig;
@@ -24,29 +25,19 @@ export function FormRenderer({
   updateVisibility,
   onFinish
 }: FormRendererProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const {
+    currentStepIndex,
+    progress,
+    next,
+    back,
+    jumpToStep,
+    isFirst,
+    isLast
+  } = useStepNavigation(config.questions.length, onFinish);
 
   const currentQuestion = config.questions[currentStepIndex];
   const section = config.sections.find(s => s.id === currentQuestion.sectionId);
   const sectionIndex = config.sections.findIndex(s => s.id === section?.id);
-  
-  const progress = ((currentStepIndex + 1) / config.questions.length) * 100;
-
-  const next = () => {
-    if (currentStepIndex < config.questions.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
-      window.scrollTo(0, 0);
-    } else {
-      onFinish();
-    }
-  };
-
-  const back = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1);
-      window.scrollTo(0, 0);
-    }
-  };
 
   return (
     <div className="space-y-12">
@@ -90,8 +81,8 @@ export function FormRenderer({
             onVisibilityChange={(vis) => updateVisibility(currentQuestion.id, vis)}
             onNext={next}
             onBack={back}
-            isFirst={currentStepIndex === 0}
-            isLast={currentStepIndex === config.questions.length - 1}
+            isFirst={isFirst}
+            isLast={isLast}
           />
         </motion.div>
       </AnimatePresence>
@@ -101,7 +92,7 @@ export function FormRenderer({
         {config.questions.map((q, i) => (
           <button
             key={q.id}
-            onClick={() => setCurrentStepIndex(i)}
+            onClick={() => jumpToStep(i)}
             className="group min-w-11 min-h-11 inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
             aria-label={`Go to question ${i + 1}: ${q.label}`}
             aria-current={i === currentStepIndex ? "step" : undefined}

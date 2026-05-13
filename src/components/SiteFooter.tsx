@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export function SiteFooter() {
   return (
     <footer className="border-t border-ankahe-border/50 bg-ankahe-surface">
@@ -19,11 +21,25 @@ export function SiteFooter() {
             <h4 className="text-xs font-bold text-ankahe-accent-dark uppercase tracking-widest">
               Manuals
             </h4>
-            <nav className="flex flex-col gap-3 text-sm text-ankahe-muted">
-              <span className="hover:text-ankahe-text transition-colors cursor-pointer">Me Manual</span>
-              <span className="hover:text-ankahe-text transition-colors cursor-pointer">Work Manual</span>
-              <span className="text-ankahe-muted/50 cursor-not-allowed">Talk Manual (Coming Soon)</span>
-              <span className="text-ankahe-muted/50 cursor-not-allowed">Us Manual (Coming Soon)</span>
+            <nav aria-label="Manuals" className="flex flex-col gap-2 text-sm text-ankahe-muted">
+              <Link
+                to="/manual/me"
+                className="min-h-11 inline-flex items-center hover:text-ankahe-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
+              >
+                Me Manual
+              </Link>
+              <Link
+                to="/manual/work"
+                className="min-h-11 inline-flex items-center hover:text-ankahe-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ankahe-accent focus-visible:ring-offset-2"
+              >
+                Work Manual
+              </Link>
+              <span aria-disabled="true" className="min-h-11 inline-flex items-center text-ankahe-muted/50">
+                Talk Manual (Coming Soon)
+              </span>
+              <span aria-disabled="true" className="min-h-11 inline-flex items-center text-ankahe-muted/50">
+                Us Manual (Coming Soon)
+              </span>
             </nav>
           </div>
 
