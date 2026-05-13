@@ -221,7 +221,7 @@ function ManualBuilder({
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
 
     </div>
   );
